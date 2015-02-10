@@ -17,8 +17,10 @@
         var eventSelect = $('#eventSelect').MPEventSelect();
         var propSelect  = $('#propSelect').MPPropertySelect();
         var dateSelect  = $('#dateSelect').MPDatepicker();
-        
-       
+        var eventGraph  = $('#graph').MPChart({chartType: 'line'});
+        var eventTable  = $('#table').MPTable();
+
+        var x = true;
 
         var runQuery = function() {
           var eventName = eventSelect.MPEventSelect('value'),
@@ -27,8 +29,13 @@
 
           if (eventName) {
             MP.api.segment(eventName, propName, dateRange).done(function(results) {
-              var eventGraph  = $('#graph').MPChart({chartType: 'line', data: results});
-               var eventTable  = $('#table').MPTable({data: results});
+              if (x) {
+               eventGraph.MPChart('setData', results); 
+               x = false;
+              } else {
+                eventGraph.MPChart('addSeries', results); 
+              }
+              eventTable.MPTable('setData', results);
             });
           }
         };
